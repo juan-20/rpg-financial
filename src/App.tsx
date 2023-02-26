@@ -1,47 +1,95 @@
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from './firebase';
-import { onValue, ref } from 'firebase/database';
+import { onValue, ref, remove, set } from 'firebase/database';
 import {TbDiamond} from 'react-icons/tb'
 import {GiHealthPotion} from 'react-icons/gi'
+import {HiPlusCircle} from 'react-icons/hi'
+import {AiFillEdit} from 'react-icons/ai'
+import {BsFillTrashFill} from 'react-icons/bs'
+
+import { v4 as uuidv4 } from 'uuid';
 
 interface bankProps {
   name: string,
   value: number
+  id: string
 }
 
-
+interface dataProps {
+  money: bankProps[],
+  items: bankProps[]
+}
 
 function App() {
-  const [data, setData] = useState<bankProps[]>([]);
+  const [money, setMoney] = useState<bankProps[]>([]);
+  const [items, setItems] = useState<bankProps[]>([]);
+  const [showAdd, setShowAdd] = useState(false);
+
+  const [title, setTitle] = useState('');
+  const [quantity, setQuantity] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-    const query =  ref(db, `/money`);
+    const query =  ref(db, `/`);
     onValue(query, (snapshot) => {
-      const data: bankProps[] = snapshot.val();
-      console.log(data);
-      setData(data)
+      const data: dataProps = snapshot.val();
+      setMoney(data.money)
+      setItems(Object.values(data.items))
     })
+  }
+  fetchData();
+}, []);
+
+console.log(items);
+  function addItem(){
+    setShowAdd(true)
+    if (showAdd === true){
+      setShowAdd(false)
     }
+  }
 
-   fetchData();
-  }, []);
+  const handleAddItem= (event: FormEvent) => {
+    event.preventDefault();
+    let newId = uuidv4()
+    set(ref(db, 'items/' + newId), {
+      name: title,
+      value: quantity,
+      id: newId
+    })
+    .then(() => {
+      setTitle('');
+      setQuantity('')
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+    
+  }
 
-  const [count, setCount] = useState(0)
+  const removeItem = (id: string) => {
+    
+    const itemRef = ref(db, `items/${id}`)
+    remove(itemRef)
+    console.log(itemRef);
+    
+  }
 
   return (
     <div className="App">
       <h1>Banco dos crias 🏦</h1>
       <div className="card">
-      {data.map((e: bankProps, index)=> (
-        <div className='coins'>
+      {money.map((e: bankProps, index)=> (
+        <div key={index} className='coins'>
           <span>{e.name}</span>
-        <button onClick={() => setCount((count) => count + 1)}>
+        <div className="changeMoney">
+        <button>
           {e.value}
         </button>
+          <AiFillEdit className='edit'/>
+        </div>
         </div>
         ))} 
         <div className="items">
@@ -52,7 +100,16 @@ function App() {
           <div className="item">
             <GiHealthPotion size={16}/>
             <p>Poção de cura 4d4 + 4: 3</p>
-          </div> _____
+          </div> 
+          {items.map((e: bankProps, index) => (
+            <div className="item">
+              <p>{e.name}:</p>
+              <p>{e.value}</p>
+              <BsFillTrashFill onClick={() => removeItem(e.id)}/>
+            </div>
+          ))}
+          
+          _____
         </div>
         <div className="center">
           <p>1 silver = 10 copper</p>
@@ -64,6 +121,25 @@ function App() {
       <a href='https://forms.gle/Frfq1WDTwcxz2xwA9' className="read-the-docs">
         Preencha o formulario com oque você tem
       </a>
+      <div onClick={addItem} className="addnewItem">
+      <HiPlusCircle/> Adicionar um novo item
+      </div>
+        {showAdd ?
+          <div className="input">
+            <input onChange={(event) => setTitle(event.target.value)}
+             className='addText'
+             type="text" 
+             name="Nome"
+             placeholder='Nome' />
+
+            <input onChange={(event) => setQuantity(event.target.value)}
+              className='addQuant' 
+              type="number" 
+              name="Quantidade"
+              placeholder='Quant.' />
+            <button onClick={handleAddItem}>Enviar</button>
+          </div>
+        : null}
     </div>
   )
 }

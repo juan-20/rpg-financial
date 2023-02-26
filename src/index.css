@@ -74,6 +74,7 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   padding: 1.5rem;
+  align-items: center;
 }
 
 input{
@@ -98,6 +99,7 @@ margin: 0;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
 }
 
 .span{
@@ -105,4 +107,45 @@ margin: 0;
   justify-content: center;
   align-items: center;
   align-content: center;
+}
+
+.input{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.addText{
+  padding: 0.6em 1.2em;
+  width: 5rem;
+}
+
+.addQuant{
+  padding: 0.6em 1.2em;
+  width: 3rem;
+}
+
+.addnewItem{
+  padding: 1rem
+}
+.addnewItem:hover{
+  color: #747bff;
+  cursor: pointer;
+}
+
+.changeMoney{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.edit{
+  cursor: pointer;
+  padding: 0.3rem;
+}
+
+.edit:hover{
+  outline: 4px auto -webkit-focus-ring-color;
 }
