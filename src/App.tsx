@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import './App.css'
 import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from './firebase';
-import { onValue, ref, remove, set } from 'firebase/database';
+import { onValue, ref, remove, set, update } from 'firebase/database';
 import {TbDiamond} from 'react-icons/tb'
 import {GiHealthPotion} from 'react-icons/gi'
 import {HiPlusCircle} from 'react-icons/hi'
@@ -27,6 +27,8 @@ function App() {
   const [money, setMoney] = useState<bankProps[]>([]);
   const [items, setItems] = useState<bankProps[]>([]);
   const [showAdd, setShowAdd] = useState(false);
+
+  const [coin, setCoin] = useState('');
 
   const [title, setTitle] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -77,6 +79,16 @@ console.log(items);
     
   }
 
+  const updateCoins = (id: string) => {
+    
+    const itemRef = ref(db, `money/${id}`)
+    update(itemRef, {
+      value: coin,
+    })
+    console.log(itemRef);
+    
+  }
+
   return (
     <div className="App">
       <h1>Banco dos crias 🏦</h1>
@@ -88,7 +100,15 @@ console.log(items);
         <button>
           {e.value}
         </button>
-          <AiFillEdit className='edit'/>
+        <input onChange={(event) => setCoin(event.target.value)}
+             className='changeCoin'
+             type="number" 
+             name='1'
+             placeholder='1' />
+             <div onClick={() => updateCoins(e.id)}  className="edit">
+                <AiFillEdit className=''/>
+                Alterar
+              </div>
         </div>
         </div>
         ))} 
@@ -134,7 +154,7 @@ console.log(items);
 
             <input onChange={(event) => setQuantity(event.target.value)}
               className='addQuant' 
-              type="number" 
+              type="string" 
               name="Quantidade"
               placeholder='Quant.' />
             <button onClick={handleAddItem}>Enviar</button>
