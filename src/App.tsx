@@ -18,14 +18,18 @@ interface bankProps {
   id: string
 }
 
+interface itemProps extends bankProps {
+  icon: string
+}
+
 interface dataProps {
   money: bankProps[],
-  items: bankProps[]
+  items: itemProps[]
 }
 
 function App() {
   const [money, setMoney] = useState<bankProps[]>([]);
-  const [items, setItems] = useState<bankProps[]>([]);
+  const [items, setItems] = useState<itemProps[]>([]);
   const [showAdd, setShowAdd] = useState(false);
 
   const [coin, setCoin] = useState('');
@@ -96,7 +100,7 @@ console.log(items);
       <div className="card">
       {money.map((e: bankProps, index)=> (
         <div key={index} className='coins'>
-          <span>{e.name}</span>
+          <span>{e.name}:</span>
         <div className="changeMoney">
         <button>
           {e.value}
@@ -105,7 +109,7 @@ console.log(items);
              className='changeCoin'
              type="number" 
              name='1'
-             placeholder={`1 ${e.name}`}/>
+             placeholder={`Coins`}/>
              <div onClick={() => updateCoins(e.id)}  className="edit">
                 <AiFillEdit className=''/>
                 Alterar
@@ -122,11 +126,12 @@ console.log(items);
             <GiHealthPotion size={16}/>
             <p>Poção de cura 4d4 + 4: 3</p>
           </div> 
-          {items.map((e: bankProps, index) => (
+          {items.map((e: itemProps, index) => (
             <div className="item">
+              <i className={e.icon}></i>
               <p>{e.name}:</p>
               <p>{e.value}</p>
-              <BsFillTrashFill onClick={() => removeItem(e.id)}/>
+              <BsFillTrashFill className='trash' onClick={() => removeItem(e.id)}/>
             </div>
           ))}
           
@@ -139,9 +144,8 @@ console.log(items);
           <p>1 platinum = 10 gold</p>
         </div>
       </div>
-      <a href='https://forms.gle/Frfq1WDTwcxz2xwA9' className="read-the-docs">
-        Preencha o formulario com oque você tem
-      </a>
+
+      
       <div onClick={addItem} className="addnewItem">
       <HiPlusCircle/> Adicionar um novo item
       </div>
@@ -161,6 +165,10 @@ console.log(items);
             <button onClick={handleAddItem}>Enviar</button>
           </div>
         : null}
+
+      <a href='https://forms.gle/Frfq1WDTwcxz2xwA9' className="read-the-docs">
+        Preencha o formulario com oque você tem
+      </a>
     </div>
   )
 }
