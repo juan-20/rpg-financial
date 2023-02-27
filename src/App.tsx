@@ -9,7 +9,8 @@ import {GiHealthPotion} from 'react-icons/gi'
 import {HiPlusCircle} from 'react-icons/hi'
 import {AiFillEdit} from 'react-icons/ai'
 import {BsFillTrashFill} from 'react-icons/bs'
-
+import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 
 interface bankProps {
@@ -59,19 +60,38 @@ console.log(items);
 
   const handleAddItem= (event: FormEvent) => {
     event.preventDefault();
+    if(title && quantity){
     let newId = uuidv4()
     set(ref(db, 'items/' + newId), {
       name: title,
       value: quantity,
       id: newId
     })
-    .then(() => {
-      setTitle('');
-      setQuantity('')
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    setTitle('');
+    setQuantity('');
+    toast('💎 Item adicionado!', {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      });
+    }else{
+      toast.error('Preencha os campos!', {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        });
+    }
+
     
   }
 
@@ -80,6 +100,17 @@ console.log(items);
     const itemRef = ref(db, `items/${id}`)
     remove(itemRef)
     console.log(itemRef);
+
+    toast('🗑️ Item excluido', {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      });
     
   }
 
@@ -89,14 +120,48 @@ console.log(items);
     update(itemRef, {
       value: coin,
     })
-    console.log(itemRef);
+    toast('🪙 Dinheiro atualizado!', {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      });
+      setCoin('')
+  }else{
+    toast.error('Preencha o campo!', {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      });
   }
     
   }
 
   return (
     <div className="App">
+      <ToastContainer
+      position="top-right"
+      autoClose={1000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="dark"
+      />
       <h1>Banco dos crias 🏦</h1>
+        <strong className='sub-title'>Moedas:</strong>
       <div className="card">
       {money.map((e: bankProps, index)=> (
         <div key={index} className='coins'>
@@ -110,22 +175,15 @@ console.log(items);
              type="number" 
              name='1'
              placeholder={`Coins`}/>
-             <div onClick={() => updateCoins(e.id)}  className="edit">
+             <button onClick={() => updateCoins(e.id)}  className="edit">
                 <AiFillEdit className=''/>
                 Alterar
-              </div>
+             </button>
         </div>
         </div>
         ))} 
         <div className="items">
-          <div className="item">
-            <TbDiamond size={16}/>
-            <p>Diamante revify: 3</p>
-          </div>
-          <div className="item">
-            <GiHealthPotion size={16}/>
-            <p>Poção de cura 4d4 + 4: 3</p>
-          </div> 
+        <strong className='sub-title'>Itens:</strong> 
           {items.map((e: itemProps, index) => (
             <div className="item">
               <i className={e.icon}></i>
@@ -145,24 +203,29 @@ console.log(items);
         </div>
       </div>
 
-      
+
       <div onClick={addItem} className="addnewItem">
       <HiPlusCircle/> Adicionar um novo item
       </div>
         {showAdd ?
           <div className="input">
-            <input onChange={(event) => setTitle(event.target.value)}
-             className='addText'
-             type="text" 
-             name="Nome"
-             placeholder='Nome' />
+            <div className="">
+              <p>Adicione um item encontrado, e a quantidade e/ou o valor dos items</p>
+            </div>
+            <div className="input-group">
+              <input onChange={(event) => setTitle(event.target.value)}
+              className='addText'
+              type="text" 
+              name="Nome"
+              placeholder='Nome' />
 
-            <input onChange={(event) => setQuantity(event.target.value)}
-              className='addQuant' 
-              type="string" 
-              name="Quantidade"
-              placeholder='Quant.' />
-            <button onClick={handleAddItem}>Enviar</button>
+              <input onChange={(event) => setQuantity(event.target.value)}
+                className='addQuant' 
+                type="string" 
+                name="Quantidade"
+                placeholder='Quant.' />
+              <button onClick={handleAddItem}>Enviar</button>
+            </div>
           </div>
         : null}
 

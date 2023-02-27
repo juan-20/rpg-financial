@@ -3,6 +3,7 @@
   margin: 0 auto;
   /* padding: 2rem; */
   text-align: center;
+  transition: 0.08s linear;
 }
 
 .logo {
@@ -39,4 +40,8 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.sub-title{
+  padding: 2rem;
 }
