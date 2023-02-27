@@ -80,12 +80,13 @@ console.log(items);
   }
 
   const updateCoins = (id: string) => {
-    
+    if (coin){
     const itemRef = ref(db, `money/${id}`)
     update(itemRef, {
       value: coin,
     })
     console.log(itemRef);
+  }
     
   }
 
