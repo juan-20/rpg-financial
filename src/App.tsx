@@ -104,7 +104,7 @@ console.log(items);
              className='changeCoin'
              type="number" 
              name='1'
-             placeholder='1' />
+             placeholder={`1 ${e.name}`}/>
              <div onClick={() => updateCoins(e.id)}  className="edit">
                 <AiFillEdit className=''/>
                 Alterar
