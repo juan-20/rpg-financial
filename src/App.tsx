@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
 import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from './firebase';
+import { db } from './service/firebase';
 import { onValue, ref, remove, set, update } from 'firebase/database';
 import {TbDiamond} from 'react-icons/tb'
 import {GiHealthPotion} from 'react-icons/gi'
@@ -12,6 +12,8 @@ import {BsFillTrashFill} from 'react-icons/bs'
 import { ToastContainer, toast } from 'react-toastify';
   import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
+import Popup from './components/Popup';
+import { useAuth } from './hooks/AuthContext';
 
 interface bankProps {
   name: string,
@@ -52,6 +54,8 @@ function App() {
 
 console.log(items);
   function addItem(){
+    isPinInLocalStorage(pin)
+    if(isPinValid === false) return
     setShowAdd(true)
     if (showAdd === true){
       setShowAdd(false)
@@ -60,6 +64,8 @@ console.log(items);
 
   const handleAddItem= (event: FormEvent) => {
     event.preventDefault();
+    isPinInLocalStorage(pin)
+    if(isPinValid === false) return
     if(title && quantity){
     let newId = uuidv4()
     set(ref(db, 'items/' + newId), {
@@ -96,7 +102,8 @@ console.log(items);
   }
 
   const removeItem = (id: string) => {
-    
+    isPinInLocalStorage(pin)
+    if(isPinValid === false) return
     const itemRef = ref(db, `items/${id}`)
     remove(itemRef)
     console.log(itemRef);
@@ -115,6 +122,8 @@ console.log(items);
   }
 
   const updateCoins = (id: string) => {
+    isPinInLocalStorage(pin)
+    if(isPinValid === false) return
     if (coin){
     const itemRef = ref(db, `money/${id}`)
     update(itemRef, {
@@ -145,6 +154,7 @@ console.log(items);
   }
     
   }
+  const { postLocalStorage, pin, isPinInLocalStorage, isPinValid } = useAuth()
 
   return (
     <div className="App">
@@ -195,12 +205,12 @@ console.log(items);
           
           _____
         </div>
-        <div className="center">
+        {/* <div className="center">
           <p>1 silver = 10 copper</p>
           <p>1 electrum = 5 silver</p>
           <p>1 gold = 10 silver</p>
           <p>1 platinum = 10 gold</p>
-        </div>
+        </div> */}
       </div>
 
 
@@ -229,9 +239,10 @@ console.log(items);
           </div>
         : null}
 
-      <a href='https://forms.gle/Frfq1WDTwcxz2xwA9' className="read-the-docs">
+      {/* <a href='https://forms.gle/Frfq1WDTwcxz2xwA9' className="read-the-docs">
         Preencha o formulario com oque você tem
-      </a>
+      </a> */}
+        <Popup content='Para segurança do site você deve digitar o PIN da party para poder fazer as alterações' title='Autenticar' />
     </div>
   )
 }

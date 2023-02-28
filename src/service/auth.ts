@@ -1,0 +1,1 @@
+export const passwordENV: string = import.meta.env.VITE_PASSWORD
