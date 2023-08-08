@@ -1,12 +1,13 @@
 import { createContext, useContext, useState } from "react";
 import { passwordENV } from "../service/auth";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
+import { set } from "firebase/database";
 
 type AuthContextType = {
   pin: string;
   postLocalStorage: (value: string) => void;
   isPinInLocalStorage: (value: string) => void;
-  isPinValid: boolean
+  isPinValid: boolean;
 };
 
 type AuthProviderProps = {
@@ -17,7 +18,7 @@ const AuthContext = createContext<AuthContextType>({
   pin: "",
   postLocalStorage: () => {},
   isPinInLocalStorage: () => {},
-  isPinValid: false
+  isPinValid: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -35,30 +36,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const isPinInLocalStorage = (value: string) => {
-    if (value === passwordENV && pin === passwordENV){
-        setIsPinValid(true);
-      }else{
-        setIsPinValid(false)
-        toast.error('🔒 Faça o Login', {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-          });
-          return
+    if (value === passwordENV && pin === passwordENV) {
+      setIsPinValid(true);
+      return;
+    } else {
+      setIsPinValid(false);
+      toast.error("🔒 Faça o Login", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      return;
     }
-// make it so it shows he toaster 
-}
+    // make it so it shows he toaster
+  };
 
   const authContextValue: AuthContextType = {
     pin,
     postLocalStorage,
     isPinInLocalStorage,
-    isPinValid
+    isPinValid,
   };
 
   return (
