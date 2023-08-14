@@ -243,17 +243,28 @@ function App() {
             ))}
           </div>
 
-          <div className="items">
-            <strong className="sub-title">Itens:</strong>
+          <div className="flex flex-col">
+            <strong className="flex justify-center items-center">Itens:</strong>
             {items.map((e: itemProps, index) => (
-              <div className="flex gap-4 justify-between items-center p-4">
-                <i className={e.icon}></i>
-                <p>{e.name}:</p>
-                <p>{e.value}</p>
+              <div className="flex gap-4 items-center p-4">
+                <i className={`${e.icon} w-4 h-4`}></i>
+                <p className="text-ellipsis overflow-hidden h-6 w-72 flex justify-center">
+                  {e.name}:
+                </p>
+                <p className="h-6 w-20 flex justify-center text-ellipsis overflow-hidden">
+                  {e.value}
+                </p>
                 <BsFillTrashFill
                   className="trash"
                   onClick={() => removeItem(e.id)}
                 />
+                {/* <button
+                  onClick={() => updateCoins(e.id)}
+                  className="flex justify-center items-center gap-2"
+                >
+                  <AiFillEdit />
+                  Alterar
+                </button> */}
               </div>
             ))}
             _____
