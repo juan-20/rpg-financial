@@ -48,6 +48,8 @@ function App() {
   const [quantity, setQuantity] = useState("");
   const [icon, setIcon] = useState("");
 
+  const [editingItem, setEditingItem] = useState<itemProps | null>(null);
+
   useEffect(() => {
     const fetchData = async () => {
       const query = ref(db, `/`);
@@ -79,6 +81,7 @@ function App() {
         name: title,
         value: quantity,
         id: newId,
+        icon: icon
       });
       setTitle("");
       setQuantity("");
@@ -247,31 +250,61 @@ function App() {
           <div className="flex flex-col">
             <strong className="flex justify-center items-center">Itens:</strong>
             {items.map((e: itemProps, index) => (
-              <div className="flex gap-4 items-center p-4">
+              <div className="flex gap-4 items-center p-4" key={index}>
                 <i className={`${e.icon} w-4 h-4`}></i>
                 <p className="text-ellipsis overflow-hidden h-6 w-72 flex justify-center">
-                  {e.name}:
+                  {editingItem?.id === e.id ? (
+                    <input
+                      value={editingItem.name}
+                      onChange={(event) => setEditingItem({ ...editingItem, name: event.target.value })}
+                      className="border border-gray-300 rounded-lg p-1"
+                    />
+                  ) : (
+                    `${e.name}:`
+                  )}
                 </p>
                 <p className="h-6 w-20 flex justify-center text-ellipsis overflow-hidden">
-                  {e.value}
+                  {editingItem?.id === e.id ? (
+                    <input
+                      type="number"
+                      value={editingItem.value}
+                      onChange={(event) => setEditingItem({ ...editingItem, value: Number(event.target.value) })}
+                      className="border border-gray-300 rounded-lg p-1"
+                    />
+                  ) : (
+                    e.value
+                  )}
                 </p>
                 <BsFillTrashFill
                   className="trash cursor-pointer hover:fill-red-600"
                   onClick={() => removeItem(e.id)}
                 />
                 <button
-                  onClick={() => updateCoins(e.id)}
+                  onClick={() => {
+                    if (editingItem?.id === e.id) {
+                      // Save changes
+                      const itemRef = ref(db, `items/${e.id}`);
+                      update(itemRef, {
+                        name: editingItem.name,
+                        value: editingItem.value,
+                        icon: e.icon // Keep the same icon
+                      });
+                      setEditingItem(null); // Clear editing state
+                    } else {
+                      // Start editing
+                      setEditingItem(e);
+                    }
+                  }}
                   className="flex justify-center items-center gap-2 cursor-pointer hover:fill-blue-500 hover:text-blue-500"
                 >
                   <AiFillEdit />
-                  Alterar
+                  {editingItem?.id === e.id ? "Salvar" : "Alterar"}
                 </button>
               </div>
             ))}
-            
           </div>
         </div>
-        <div onClick={addItem} className="addnewItem flex justify-center content-center pt-8">
+        <div onClick={addItem} className="addnewItem flex justify-center content-center items-center gap-4 pt-8 border-b-2 border-blue-700 mb-8">
         <HiPlusCircle /> Adicionar um novo item
       </div>
       </form>
@@ -348,8 +381,8 @@ function App() {
                   { name: "Monstros", value: "ph-ghost"}
                   // Add more icons here
                 ].map((iconOption) => (
-                  <div className="flex justify-center content-center">
-                    <i className={`${iconOption.value} w-4 h-4`}></i><p>{iconOption.name}</p>
+                  <div className="flex justify-center content-start items-start gap-4">
+                    <i className={`${iconOption.value} w-4 h-4`}></i><p>- {iconOption.name}</p>
                   </div>
                 )
               )}
