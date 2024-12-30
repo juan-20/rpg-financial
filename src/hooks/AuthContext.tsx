@@ -53,7 +53,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
       return;
     }
-    // make it so it shows he toaster
   };
 
   const authContextValue: AuthContextType = {

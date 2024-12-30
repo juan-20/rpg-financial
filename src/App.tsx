@@ -46,6 +46,7 @@ function App() {
 
   const [title, setTitle] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [icon, setIcon] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,7 +128,7 @@ function App() {
 
   const updateCoins = (id: string) => {
     isPinInLocalStorage(pin);
-    if (isPinValid === false) return;
+    // if (isPinValid === false) return;
     if (coin) {
       const itemRef = ref(db, `money/${id}`);
       update(itemRef, {
@@ -174,7 +175,7 @@ function App() {
         theme="dark"
       />
 
-      <form className="flex flex-col justify-center items-center" action="">
+      <form className="flex flex-col justify-center items-center border-b-2 border-cyan-900" action="">
         <div className="coins">
           <div className="flex justify-between items-center">
             <strong className="sub-title">Moedas:</strong>
@@ -223,9 +224,9 @@ function App() {
               <div className="" key={index}>
                 <span>{e.name}:</span>
                 <div className="flex gap-4 justify-center items-center">
-                  <p>{e.value}</p>
                   <input
                     onChange={(event) => setCoin(event.target.value)}
+                    value={coin || e.value}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     type="number"
                     name="1"
@@ -233,7 +234,7 @@ function App() {
                   />
                   <button
                     onClick={() => updateCoins(e.id)}
-                    className="flex justify-center items-center gap-2"
+                    className="flex justify-center items-center gap-2 hover:fill-blue-500 hover:text-blue-500"
                   >
                     <AiFillEdit />
                     Alterar
@@ -255,53 +256,103 @@ function App() {
                   {e.value}
                 </p>
                 <BsFillTrashFill
-                  className="trash"
+                  className="trash cursor-pointer hover:fill-red-600"
                   onClick={() => removeItem(e.id)}
                 />
-                {/* <button
+                <button
                   onClick={() => updateCoins(e.id)}
-                  className="flex justify-center items-center gap-2"
+                  className="flex justify-center items-center gap-2 cursor-pointer hover:fill-blue-500 hover:text-blue-500"
                 >
                   <AiFillEdit />
                   Alterar
-                </button> */}
+                </button>
               </div>
             ))}
-            _____
+            
           </div>
         </div>
-      </form>
-
-      <div onClick={addItem} className="addnewItem">
+        <div onClick={addItem} className="addnewItem flex justify-center content-center pt-8">
         <HiPlusCircle /> Adicionar um novo item
       </div>
+      </form>
+
+ 
+      <div className="flex justify-center content-center pt-8">
       {showAdd ? (
-        <div className="input">
-          <div className="">
-            <p>
+        <div className="input p-4 border rounded-lg shadow-md mr-20">
+          <div className="mb-4">
+            <p className="text-lg font-semibold">
               Adicione um item encontrado, e a quantidade e/ou o valor dos items
             </p>
           </div>
-          <div className="input-group">
-            <input
-              onChange={(event) => setTitle(event.target.value)}
-              className="addText"
-              type="text"
-              name="Nome"
-              placeholder="Nome"
-            />
-
-            <input
-              onChange={(event) => setQuantity(event.target.value)}
-              className="addQuant"
-              type="string"
-              name="Quantidade"
-              placeholder="Quant."
-            />
-            <button onClick={handleAddItem}>Enviar</button>
+          <div className="input-group flex flex-col gap-4">
+            <div className="flex items-center">
+              <input
+                onChange={(event) => setTitle(event.target.value)}
+                value={title}
+                className="addText flex-1 border border-gray-300 rounded-lg p-2"
+                type="text"
+                name="Nome"
+                placeholder="Nome"
+              />
+              <input
+                onChange={(event) => setQuantity(event.target.value)}
+                value={quantity}
+                className="addQuant flex-1 border border-gray-300 rounded-lg p-2"
+                type="number"
+                name="Quantidade"
+                placeholder="Quant."
+              />
+              <select
+                onChange={(event) => setIcon(event.target.value)}
+                value={icon}
+                className="addIcon border border-gray-300 rounded-lg p-2 ml-2"
+                name="Icon"
+              >
+                <option value="" disabled>Select an icon</option>
+                {[
+                     { name: "Diamante", value: "ph-sketch-logo" },
+                     { name: "Coração", value: "ph-heart" },
+                     { name: "Magia", value: "ph-magic-wand"},
+                     { name:"Arma", value: "ph-axe"},
+                     { name: "Elixir", value: "ph-beer-bottle"},
+                     { name: "Bomba", value: "bomb"},
+                     { name: "Livros", value: "ph-books"},
+                     { name: "Transgenero", value: "ph-gender-transgender"},
+                     { name: "Monstros", value: "ph-ghost"}
+                ].map((iconOption) => (
+                  <option className="flex gap-4 items-center p-4 fill-white" key={iconOption.value} value={iconOption.value}>
+                     <i className={`${iconOption.value} w-4 h-4 `}></i>
+                     {iconOption.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button onClick={handleAddItem} className="bg-blue-500 text-white rounded-lg p-2 hover:bg-blue-600">
+              Enviar
+            </button>
           </div>
         </div>
       ) : null}
+
+      </div>
+                {[
+                  { name: "Diamante", value: "ph-sketch-logo" },
+                  { name: "Coração", value: "ph-heart" },
+                  { name: "Magia", value: "ph-magic-wand"},
+                  { name:"Arma", value: "ph-axe"},
+                  { name: "Elixir", value: "ph-beer-bottle"},
+                  { name: "Bomba", value: "bomb"},
+                  { name: "Livros", value: "ph-books"},
+                  { name: "Transgenero", value: "ph-gender-transgender"},
+                  { name: "Monstros", value: "ph-ghost"}
+                  // Add more icons here
+                ].map((iconOption) => (
+                  <div className="flex justify-center content-center">
+                    <i className={`${iconOption.value} w-4 h-4`}></i><p>{iconOption.name}</p>
+                  </div>
+                )
+              )}
     </div>
   );
 }
